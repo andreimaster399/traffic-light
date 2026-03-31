@@ -1,3 +1,5 @@
+print('Привет, я светофор')
+input('Чтобы запустить светофор нажми ENTER')
 
 from time import sleep as ts
 import os
