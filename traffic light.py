@@ -1,31 +1,64 @@
-print('Привет, я светофор')
-input('Чтобы запустить светофор нажми ENTERTERTER')
+# traffic light.py
+import tkinter as tk
 
-from time import sleep as ts
-import os
-while True:
-    for a in range(10, 0, -1):
-        print('Красный цвет 🔴')
-        print(a)
-        ts(1)
-        def clear_terminal():
-            os.system('cls' if os.name == 'nt' else 'clear')
-        if __name__ == "__main__":
-            clear_terminal()
-    for b in range(5, 0, -1):
-        print('Желтый цвет 🟡')
-        print(b)
-        ts(1)
-        def clear_terminal():
-            os.system('cls' if os.name == 'nt' else 'clear')
-        if __name__ == "__main__":
-            clear_terminal()
-    for c in range(10, 0, -1):
-        print('Зелёный цвет 🟢')
-        print(c)
-        ts(1)
-        def clear_terminal():
-            os.system('cls' if os.name == 'nt' else 'clear')
-        if __name__ == "__main__":
-            clear_terminal()
+import config
+from controller import Phase, TrafficLightController
+from ui_traffic_light import TrafficLightWidget
 
+
+def main() -> None:
+    root = tk.Tk()
+    root.title(config.WINDOW_TITLE)
+    root.configure(bg=config.BG)
+    root.resizable(False, False)
+
+    widget = TrafficLightWidget(
+        root,
+        width=config.WIDTH,
+        height=config.HEIGHT,
+        bg=config.BG,
+        padding=config.PADDING,
+        line_w=config.LINE_W,
+        lamp_radius=config.LAMP_RADIUS,
+        lamp_gap=config.LAMP_GAP,
+        off_color=config.OFF,
+    )
+    widget.pack(padx=14, pady=14)
+
+    phases = [
+        Phase(
+            name="RED",
+            duration_ms=config.RED_MS,
+            set_on=lambda: widget.set_red(config.RED_ON),
+            set_off=lambda: widget.set_red(config.OFF),
+            off_all=widget.set_all_off,
+        ),
+        Phase(
+            name="YELLOW",
+            duration_ms=config.YELLOW_MS,
+            set_on=lambda: widget.set_yellow(config.YELLOW_ON),
+            set_off=lambda: widget.set_yellow(config.OFF),
+            off_all=widget.set_all_off,
+        ),
+        Phase(
+            name="GREEN",
+            duration_ms=config.GREEN_MS,
+            set_on=lambda: widget.set_green(config.GREEN_ON),
+            set_off=lambda: widget.set_green(config.OFF),
+            off_all=widget.set_all_off,
+        ),
+    ]
+
+    controller = TrafficLightController(
+        root_after=root.after,
+        phases=phases,
+        blink_enabled=config.BLINK_ENABLED,
+        blink_period_ms=config.BLINK_PERIOD_MS,
+    )
+    controller.start()
+
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
